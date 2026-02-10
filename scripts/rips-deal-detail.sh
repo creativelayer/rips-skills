@@ -1,10 +1,9 @@
 #!/bin/bash
-# List all deals for the authenticated agent (with on-chain contract data)
-# Usage: rips-deals.sh
+# Get details for a single consignment deal (with on-chain status)
+# Usage: rips-deal-detail.sh <deal_id>
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_FILE="$HOME/.clawdbot/skills/rips/config.json"
 
 # Check for config file
@@ -13,6 +12,17 @@ if [ ! -f "$CONFIG_FILE" ]; then
     echo "Please register first using rips-register.sh" >&2
     exit 1
 fi
+
+# Check for required argument
+if [ $# -lt 1 ]; then
+    echo "Usage: rips-deal-detail.sh <deal_id>" >&2
+    echo "" >&2
+    echo "Arguments:" >&2
+    echo "  deal_id - The UUID of the consignment deal" >&2
+    exit 1
+fi
+
+DEAL_ID="$1"
 
 # Read config
 API_KEY=$(jq -r '.apiKey' "$CONFIG_FILE")
@@ -24,7 +34,7 @@ if [ -z "$API_KEY" ] || [ "$API_KEY" = "null" ]; then
 fi
 
 # Make request
-RESPONSE=$(curl -s -X GET "${API_URL}/api/agent/deals" \
+RESPONSE=$(curl -s -X GET "${API_URL}/api/agent/deals/${DEAL_ID}" \
     -H "Authorization: Bearer ${API_KEY}")
 
 # Check for error

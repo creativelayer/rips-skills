@@ -67,7 +67,7 @@ New agents start with `status: pending`. An admin will review and activate your 
 scripts/rips-me.sh
 ```
 
-Once `status: active`, you can create consignment deals.
+Once `status: active`, you can create and manage consignment deals.
 
 ### Verify Setup
 
@@ -103,21 +103,52 @@ Creates a new consignment deal for your token. The deal will be reviewed before 
 scripts/rips-deals.sh
 ```
 
-Returns all consignment deals associated with your agent account.
+Returns all consignment deals with on-chain contract data (balances, earnings, daily limits).
 
-Example response:
-```json
-{
-  "deals": [
-    {
-      "id": "uuid",
-      "tokenAddress": "0x...",
-      "tokenSymbol": "MTK",
-      "status": "active",
-      "createdAt": "2026-02-09T12:00:00Z"
-    }
-  ]
-}
+### Get Deal Details
+
+```bash
+scripts/rips-deal-detail.sh "deal-uuid-here"
+```
+
+Returns full deal stats including on-chain balances, manager status, and token allowance.
+
+### Deposit Tokens
+
+```bash
+# Deposit 1000 tokens (18 decimals = 1000000000000000000000)
+scripts/rips-deal-deposit.sh "deal-uuid" "1000000000000000000000"
+```
+
+Returns prepared transactions to sign and broadcast in order:
+1. **addManager** (first time only) — authorizes your wallet on the contract
+2. **approve** (if needed) — ERC20 token approval
+3. **deposit** — the actual deposit call
+
+### Withdraw Tokens or Earnings
+
+```bash
+# Withdraw deposited tokens
+scripts/rips-deal-withdraw.sh "deal-uuid" tokens "500000000000000000000"
+
+# Withdraw USDC earnings
+scripts/rips-deal-withdraw.sh "deal-uuid" earnings
+```
+
+### Update Deal Preferences
+
+```bash
+# Toggle auto-withdraw
+scripts/rips-deal-update.sh "deal-uuid" --auto-withdraw true
+
+# Pause deal (prevents new purchases)
+scripts/rips-deal-update.sh "deal-uuid" --pause
+
+# Resume deal
+scripts/rips-deal-update.sh "deal-uuid" --resume
+
+# Set daily purchase limit (raw token units, 0 = unlimited)
+scripts/rips-deal-update.sh "deal-uuid" --daily-limit "5000000000000000000"
 ```
 
 ## Capabilities Overview
@@ -130,12 +161,13 @@ Example response:
 
 **Reference**: [references/agent-onboarding.md](references/agent-onboarding.md)
 
-### Consignment Deals (Phase 2 - Coming Soon)
+### Consignment Deals (Phase 2)
 
-- Create consignment deals for your tokens
-- Deposit tokens to deals
-- Withdraw tokens or earnings
-- Set preferences and limits
+- **Create deals** for your tokens
+- **View deals** with on-chain balances and earnings
+- **Deposit tokens** with multi-step transaction preparation
+- **Withdraw tokens** or accumulated USDC earnings
+- **Manage deals** — pause/resume, set daily limits, toggle auto-withdraw
 
 **Reference**: [references/consignment-deals.md](references/consignment-deals.md)
 
@@ -145,8 +177,6 @@ Example response:
 - Create boosted packs with subsidies
 - Track impressions and clicks
 - Monitor campaign performance
-
-**Reference**: [references/sponsorships.md](references/sponsorships.md)
 
 ## API Endpoints
 
@@ -158,15 +188,37 @@ Example response:
 | POST | `/api/agent/register` | Complete registration |
 | GET | `/api/agent/me` | Get agent info |
 
-### Deals (Coming Soon)
+### Deals
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/agent/deals` | Create consignment deal |
-| GET | `/api/agent/deals` | List agent's deals |
-| GET | `/api/agent/deals/:id` | Deal details |
-| POST | `/api/agent/deals/:id/deposit` | Deposit tokens |
-| POST | `/api/agent/deals/:id/withdraw` | Withdraw tokens |
+| POST | `/api/deals` | Create consignment deal |
+| GET | `/api/agent/deals` | List deals (with contract data) |
+| GET | `/api/agent/deals/:id` | Deal details + on-chain status |
+| PATCH | `/api/agent/deals/:id` | Update preferences / prepare on-chain ops |
+| POST | `/api/agent/deals/:id/deposit` | Prepare deposit transactions |
+| POST | `/api/agent/deals/:id/withdraw` | Prepare withdraw transactions |
+
+## Transaction Preparation
+
+The deposit, withdraw, and on-chain preference endpoints return **prepared transaction calldata** rather than executing transactions directly. Your agent signs and broadcasts these transactions using its own wallet.
+
+Response format:
+```json
+{
+  "transactions": [
+    {
+      "step": 1,
+      "description": "Approve token transfer to the ConsignmentManager contract",
+      "to": "0x...",
+      "data": "0x...",
+      "value": "0"
+    }
+  ]
+}
+```
+
+Execute transactions in step order. Each `to`/`data`/`value` triplet is a standard Ethereum transaction.
 
 ## Best Practices
 
@@ -189,13 +241,10 @@ Example response:
 Common issues and fixes:
 
 - **401 Unauthorized** → Check API key is correct and agent is active
-- **403 Forbidden** → Agent status may be pending or suspended
-- **404 Not Found** → Resource doesn't exist or you don't have access
+- **403 Forbidden** → You don't own this deal, or agent status is pending/suspended
+- **404 Not Found** → Resource doesn't exist
 - **409 Conflict** → Deal already exists for this token
-
-For comprehensive error troubleshooting:
-
-**Reference**: [references/error-handling.md](references/error-handling.md)
+- **503 Service Unavailable** → Contract not configured (on-chain features unavailable)
 
 ## Prompt Examples
 
@@ -205,13 +254,15 @@ For comprehensive error troubleshooting:
 - "What's my agent status?"
 - "Show my agent info"
 
-### Deal Management (Coming Soon)
+### Deal Management
 
-- "Create a consignment deal for my token"
+- "Create a consignment deal for my token at 0x..."
 - "List my active deals"
-- "Check the status of deal xyz"
+- "Show details for deal abc-123"
 - "Deposit 1000 tokens to my deal"
-- "Withdraw my earnings"
+- "Withdraw my USDC earnings from deal abc-123"
+- "Pause my deal"
+- "Set a daily limit of 5000 tokens on my deal"
 
 ### Sponsorships (Coming Soon)
 
