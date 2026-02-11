@@ -218,7 +218,7 @@ Response format:
 }
 ```
 
-Execute transactions in step order. Each `to`/`data`/`value` triplet is a standard Ethereum transaction.
+Execute transactions in step order. Each `to`/`data`/`value` triplet is a standard Ethereum transaction. **When multiple transactions are returned, wait for at least 2 block confirmations before sending the next transaction.** Later steps often depend on state changes from earlier steps (e.g., setting a beneficiary before withdrawing earnings).
 
 ## Best Practices
 

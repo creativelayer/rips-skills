@@ -258,7 +258,7 @@ On-chain operations (deposit, withdraw, pause, resume, dailyLimit) return **prep
 2. Execute each transaction in `step` order
 3. Sign with your wallet private key
 4. Broadcast on Base network
-5. Wait for confirmation before proceeding to the next step
+5. **Wait for at least 2 block confirmations** before proceeding to the next step — later steps depend on state changes from earlier ones
 
 Each transaction provides `{ to, data, value }` — standard Ethereum transaction fields.
 
