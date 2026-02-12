@@ -226,6 +226,40 @@ getUnpaidRewards(user: <address>)
 
 **Reference**: [references/staking.md](references/staking.md)
 
+## Pack Designs
+
+Browse base designs, preview your logo composited on them, and generate the 3 pack assets needed for boosted packs.
+
+### Browse Available Designs
+
+```bash
+scripts/rips-pack-designs.sh
+```
+
+Returns all active base designs with IDs, names, descriptions, and preview image URLs.
+
+### Preview Your Logo on a Design
+
+```bash
+scripts/rips-pack-preview.sh "foil-1" "https://example.com/logo.png" "3 COINS"
+```
+
+Returns a base64 data URL of the composited full pack image. To save as a file:
+
+```bash
+scripts/rips-pack-preview.sh "foil-1" "https://example.com/logo.png" | jq -r '.preview' | sed 's/data:image\/png;base64,//' | base64 -d > preview.png
+```
+
+### Generate Final Pack Assets
+
+```bash
+scripts/rips-pack-generate.sh "foil-1" "https://example.com/logo.png" "3 COINS" "my-token-pack"
+```
+
+Generates all 3 asset variants (full, top, bottom), uploads to IPFS, and returns CDN URLs. Save these URLs — you'll need them when creating a boosted pack.
+
+**Reference**: [references/pack-designs.md](references/pack-designs.md)
+
 ## Capabilities Overview
 
 ### Agent Onboarding (Phase 1)
@@ -255,10 +289,19 @@ getUnpaidRewards(user: <address>)
 
 **Reference**: [references/staking.md](references/staking.md)
 
-### Sponsorships (Phase 3 - Coming Soon)
+### Pack Designs (Phase 3a)
+
+- **Browse base designs** with descriptions and preview images
+- **Preview custom pack art** — composite your logo + coin text on a base design
+- **Generate pack assets** — create all 3 variants (full, top, bottom) and upload to IPFS
+- Returned CDN URLs are used when creating boosted packs
+
+**Reference**: [references/pack-designs.md](references/pack-designs.md)
+
+### Sponsorships (Phase 3b - Coming Soon)
 
 - Create sponsored free packs with banner ads
-- Create boosted packs with subsidies
+- Create boosted packs with subsidies using generated pack assets
 - Track impressions and clicks
 - Monitor campaign performance
 
@@ -282,6 +325,14 @@ getUnpaidRewards(user: <address>)
 | PATCH | `/api/agent/deals/:id` | Update preferences / prepare on-chain ops |
 | POST | `/api/agent/deals/:id/deposit` | Prepare deposit transactions |
 | POST | `/api/agent/deals/:id/withdraw` | Prepare withdraw transactions |
+
+### Pack Designs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/agent/pack-designs` | List available base designs |
+| POST | `/api/agent/pack-designs/preview` | Preview logo on a base design |
+| POST | `/api/agent/pack-designs/generate` | Generate & upload pack assets to IPFS |
 
 ## Transaction Preparation
 
@@ -354,6 +405,13 @@ Common issues and fixes:
 - "How much RIPS do I have staked?"
 - "Check my claimable USDC rewards"
 - "Claim my staking rewards"
+
+### Pack Designs
+
+- "Show me the available pack base designs"
+- "Preview my logo on the purple foil design"
+- "Generate pack assets with foil-1 design and my token logo"
+- "Which base design would work best for a gaming token?"
 
 ### Sponsorships (Coming Soon)
 
