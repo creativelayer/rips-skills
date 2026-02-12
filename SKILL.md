@@ -1,6 +1,6 @@
 ---
 name: rips
-description: AI-powered token consignment for the Rips trading card platform. Use when the user wants to register as an agent, create consignment deals, deposit or withdraw tokens, check deal status, or manage token listings on the Rips platform. Supports token onboarding, consignment management, and future sponsorship features. Operates on Base blockchain.
+description: AI-powered token consignment and staking for the Rips trading card platform. Use when the user wants to register as an agent, create consignment deals, deposit or withdraw tokens, check deal status, manage token listings, or stake RIPS tokens for USDC rewards. Supports token onboarding, consignment management, RIPS staking, and future sponsorship features. Operates on Base blockchain.
 metadata:
   {
     "clawdbot":
@@ -151,6 +151,81 @@ scripts/rips-deal-update.sh "deal-uuid" --resume
 scripts/rips-deal-update.sh "deal-uuid" --daily-limit "5000000000000000000"
 ```
 
+## Staking RIPS
+
+Stake RIPS tokens to earn USDC rewards. Staking is a direct on-chain interaction — no API key required, just a wallet on Base.
+
+### Contracts
+
+| Contract | Address | Decimals |
+|----------|---------|----------|
+| RIPS Token | `0xc1aDDAe61Bc74a14971BFA48A0B7141AdeD4fB07` | 18 |
+| USDC | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` | 6 |
+| Staker V2 | `0xB6d7B6F1c4Ad64d75fc8c63e56188b6e3eF0c004` | — |
+| Rewards Pool | `0xb0D256824ACd2EE1cbC03e97C47A7B5fec9Fe5f3` | — |
+
+Network: **Base** (chain ID `8453`)
+
+### Step 1: Acquire RIPS
+
+Swap USDC or ETH for RIPS on any Base DEX (Uniswap V3, Aerodrome, etc).
+
+### Step 2: Approve Staker V2
+
+Call `approve` on the RIPS token contract (`0xc1aDDAe61Bc74a14971BFA48A0B7141AdeD4fB07`):
+
+```
+approve(
+  spender: 0xB6d7B6F1c4Ad64d75fc8c63e56188b6e3eF0c004,  // Staker V2
+  amount:  <amount in wei, or type(uint256).max>
+)
+```
+
+### Step 3: Stake + Join Rewards Pool (single tx)
+
+Call `stake` on Staker V2 (`0xB6d7B6F1c4Ad64d75fc8c63e56188b6e3eF0c004`):
+
+```
+stake(
+  user:        <your wallet address>,
+  token:       0xc1aDDAe61Bc74a14971BFA48A0B7141AdeD4fB07,  // RIPS
+  quantity:    <amount in wei>,
+  customize:   true,
+  customPools: [0xb0D256824ACd2EE1cbC03e97C47A7B5fec9Fe5f3]  // Rewards Pool
+)
+```
+
+Setting `customize: true` with the Rewards Pool address auto-joins the USDC rewards pool in the same transaction.
+
+### Step 4: Claim USDC Rewards (periodically)
+
+Call `claimRewards` on Staker V2:
+
+```
+claimRewards(
+  user:  <your wallet address>,
+  token: 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913  // USDC
+)
+```
+
+### Read: Check Staked Balance
+
+Call `getStake` on Staker V2 — returns amount in wei (18 decimals):
+
+```
+getStake(user: <address>, token: 0xc1aDDAe61Bc74a14971BFA48A0B7141AdeD4fB07)
+```
+
+### Read: Check Claimable Rewards
+
+Call `getUnpaidRewards` on the Rewards Pool (`0xb0D256824ACd2EE1cbC03e97C47A7B5fec9Fe5f3`) — returns USDC amount (6 decimals):
+
+```
+getUnpaidRewards(user: <address>)
+```
+
+**Reference**: [references/staking.md](references/staking.md)
+
 ## Capabilities Overview
 
 ### Agent Onboarding (Phase 1)
@@ -170,6 +245,15 @@ scripts/rips-deal-update.sh "deal-uuid" --daily-limit "5000000000000000000"
 - **Manage deals** — pause/resume, set daily limits, toggle auto-withdraw
 
 **Reference**: [references/consignment-deals.md](references/consignment-deals.md)
+
+### RIPS Staking
+
+- **Stake RIPS tokens** to earn USDC rewards
+- **Claim rewards** periodically
+- **Check balances** — staked amount and claimable USDC
+- Direct on-chain interaction (no API key needed)
+
+**Reference**: [references/staking.md](references/staking.md)
 
 ### Sponsorships (Phase 3 - Coming Soon)
 
@@ -263,6 +347,13 @@ Common issues and fixes:
 - "Withdraw my USDC earnings from deal abc-123"
 - "Pause my deal"
 - "Set a daily limit of 5000 tokens on my deal"
+
+### Staking
+
+- "Stake 10 million RIPS"
+- "How much RIPS do I have staked?"
+- "Check my claimable USDC rewards"
+- "Claim my staking rewards"
 
 ### Sponsorships (Coming Soon)
 
