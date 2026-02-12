@@ -13,6 +13,8 @@ Stake RIPS tokens on Base to earn USDC rewards from the Rips platform fee pool.
 
 **Network:** Base (chain ID `8453`)
 
+> **Decimals matter:** RIPS uses 18 decimals (1 RIPS = `1000000000000000000` wei). USDC uses 6 decimals (1 USDC = `1000000`). Don't mix these up when formatting amounts for display or when parsing return values.
+
 ## How It Works
 
 1. You stake RIPS tokens into the Staker V2 contract
@@ -38,9 +40,9 @@ function approve(address spender, uint256 amount) returns (bool)
 | spender | `0xB6d7B6F1c4Ad64d75fc8c63e56188b6e3eF0c004` (Staker V2) |
 | amount | Amount to stake in wei, or `type(uint256).max` for unlimited |
 
-### 2. Stake + Join Rewards Pool
+### 2. Stake + Join Rewards Pool (single transaction)
 
-Stakes RIPS and joins the USDC rewards pool in a single transaction.
+> **Key UX detail:** By passing `customize: true` with the Rewards Pool address in `customPools`, the `stake()` call both stakes your RIPS *and* joins the USDC rewards pool in a single transaction. Without this, you'd need a separate `joinPools()` call, and you won't earn rewards until you do.
 
 **Contract:** `0xB6d7B6F1c4Ad64d75fc8c63e56188b6e3eF0c004` (Staker V2)
 
@@ -56,7 +58,26 @@ function stake(address user, address token, uint256 quantity, bool customize, ad
 | customize | `true` |
 | customPools | `[0xb0D256824ACd2EE1cbC03e97C47A7B5fec9Fe5f3]` (Rewards Pool) |
 
-Setting `customize: true` with the pool address joins the rewards pool automatically. Without this, you must call `joinPools` separately.
+<details>
+<summary>ABI</summary>
+
+```json
+{
+  "inputs": [
+    { "internalType": "address", "name": "user", "type": "address" },
+    { "internalType": "address", "name": "token", "type": "address" },
+    { "internalType": "uint256", "name": "quantity", "type": "uint256" },
+    { "internalType": "bool", "name": "customize", "type": "bool" },
+    { "internalType": "address[]", "name": "customPools", "type": "address[]" }
+  ],
+  "name": "stake",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+}
+```
+
+</details>
 
 ### 3. Claim USDC Rewards
 
@@ -72,6 +93,24 @@ function claimRewards(address user, address token)
 |-----------|-------|
 | user | Your wallet address |
 | token | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` (USDC) |
+
+<details>
+<summary>ABI</summary>
+
+```json
+{
+  "inputs": [
+    { "internalType": "address", "name": "user", "type": "address" },
+    { "internalType": "address", "name": "token", "type": "address" }
+  ],
+  "name": "claimRewards",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+}
+```
+
+</details>
 
 ### 4. Unstake (optional)
 
@@ -89,6 +128,25 @@ function unstake(address user, address token, uint256 quantity)
 | token | `0xc1aDDAe61Bc74a14971BFA48A0B7141AdeD4fB07` (RIPS) |
 | quantity | Amount to unstake in wei (18 decimals) |
 
+<details>
+<summary>ABI</summary>
+
+```json
+{
+  "inputs": [
+    { "internalType": "address", "name": "user", "type": "address" },
+    { "internalType": "address", "name": "token", "type": "address" },
+    { "internalType": "uint256", "name": "quantity", "type": "uint256" }
+  ],
+  "name": "unstake",
+  "outputs": [],
+  "stateMutability": "nonpayable",
+  "type": "function"
+}
+```
+
+</details>
+
 ## Read Functions
 
 ### Check Staked Balance
@@ -104,7 +162,27 @@ function getStake(address user, address token) view returns (uint256)
 | user | Wallet address to check |
 | token | `0xc1aDDAe61Bc74a14971BFA48A0B7141AdeD4fB07` (RIPS) |
 
-Returns staked amount in wei (18 decimals). Divide by `1e18` for human-readable amount.
+Returns staked amount in wei (**18 decimals** — divide by `1e18` for human-readable RIPS amount).
+
+<details>
+<summary>ABI</summary>
+
+```json
+{
+  "inputs": [
+    { "internalType": "address", "name": "user", "type": "address" },
+    { "internalType": "address", "name": "token", "type": "address" }
+  ],
+  "name": "getStake",
+  "outputs": [
+    { "internalType": "uint256", "name": "", "type": "uint256" }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+}
+```
+
+</details>
 
 ### Check Claimable Rewards
 
@@ -118,7 +196,26 @@ function getUnpaidRewards(address user) view returns (uint256)
 |-----------|-------|
 | user | Wallet address to check |
 
-Returns claimable USDC amount (6 decimals). Divide by `1e6` for human-readable amount.
+Returns claimable USDC amount (**6 decimals** — divide by `1e6` for human-readable USDC amount).
+
+<details>
+<summary>ABI</summary>
+
+```json
+{
+  "inputs": [
+    { "internalType": "address", "name": "user", "type": "address" }
+  ],
+  "name": "getUnpaidRewards",
+  "outputs": [
+    { "internalType": "uint256", "name": "", "type": "uint256" }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+}
+```
+
+</details>
 
 ### Check if Joined Rewards Pool
 
