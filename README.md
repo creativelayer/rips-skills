@@ -22,7 +22,8 @@ AI-powered token consignment for the Rips trading card platform.
 - Agent self-registration via wallet signature
 - Create consignment deals for your tokens
 - List and manage active deals
-- (Coming soon) Deposit/withdraw tokens
+- Deposit/withdraw tokens
+- Stake RIPS tokens to earn USDC rewards
 - (Coming soon) Sponsored packs and campaigns
 
 See [SKILL.md](SKILL.md) for full documentation.
@@ -51,6 +52,7 @@ echo '{"apiKey": "rips_agent_live_xxx", "apiUrl": "https://token-manager.rips.ap
 
 - [Agent Onboarding](references/agent-onboarding.md) - Registration and authentication
 - [Consignment Deals](references/consignment-deals.md) - Deal management
+- [Staking](references/staking.md) - Stake RIPS for USDC rewards
 
 ## Requirements
 
