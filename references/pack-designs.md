@@ -130,11 +130,13 @@ Composites logo and coin text onto a base design, generates all 3 pack asset var
 
 ## Logo Guidelines
 
-For best results:
-- **Format**: PNG with transparent background
-- **Size**: At least 400x400px (will be scaled to fit 630x400px area)
-- **Content**: Clear, high-contrast logo that works on metallic/patterned backgrounds
-- **Aspect ratio**: Square or landscape preferred (portrait logos may appear small)
+The logo is composited into a **600x400px** area on the pack. Logos larger than this are aspect-fit (scaled down proportionally to fit within the bounds). Smaller logos are centered without upscaling.
+
+- **Format**: PNG with transparent background (required for non-rectangular logos so the foil design shows through)
+- **Max placement size**: 600w x 400h pixels — logos are aspect-fit within this area
+- **Recommended source size**: At least 600x400px for crisp rendering
+- **Content**: Clear, high-contrast artwork that reads well on metallic/patterned backgrounds
+- **Background**: Transparent PNG strongly recommended. Square or rectangular logos with solid backgrounds will work but may look boxy against the foil
 
 ## Choosing a Base Design
 
