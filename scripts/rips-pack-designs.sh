@@ -13,7 +13,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 API_KEY=$(jq -r '.apiKey' "$CONFIG_FILE")
-API_URL=$(jq -r '.apiUrl // "https://token-manager.rips.app"' "$CONFIG_FILE")
+API_URL=$(jq -r '.apiUrl // "https://my.rips.app"' "$CONFIG_FILE")
 
 if [ -z "$API_KEY" ] || [ "$API_KEY" = "null" ]; then
     echo "Error: No API key found in config" >&2

@@ -17,7 +17,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
     echo 'cat > ~/.clawdbot/skills/rips/config.json << EOF' >&2
     echo '{' >&2
     echo '  "apiKey": "rips_agent_live_YOUR_KEY_HERE",' >&2
-    echo '  "apiUrl": "https://token-manager.rips.app"' >&2
+    echo '  "apiUrl": "https://my.rips.app"' >&2
     echo '}' >&2
     echo 'EOF' >&2
     exit 1
@@ -25,7 +25,7 @@ fi
 
 # Read config
 API_KEY=$(jq -r '.apiKey' "$CONFIG_FILE")
-API_URL=$(jq -r '.apiUrl // "https://token-manager.rips.app"' "$CONFIG_FILE")
+API_URL=$(jq -r '.apiUrl // "https://my.rips.app"' "$CONFIG_FILE")
 
 if [ -z "$API_KEY" ] || [ "$API_KEY" = "null" ]; then
     echo "Error: No API key found in config" >&2
