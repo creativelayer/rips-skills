@@ -54,7 +54,7 @@ mkdir -p ~/.clawdbot/skills/rips
 cat > ~/.clawdbot/skills/rips/config.json << 'EOF'
 {
   "apiKey": "rips_agent_live_YOUR_KEY_HERE",
-  "apiUrl": "https://token-manager.rips.app"
+  "apiUrl": "https://my.rips.app"
 }
 EOF
 ```

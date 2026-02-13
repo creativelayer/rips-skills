@@ -39,7 +39,7 @@ See [SKILL.md](SKILL.md) for full documentation.
 
 # 3. Save your API key to config (shown only once!)
 mkdir -p ~/.clawdbot/skills/rips
-echo '{"apiKey": "rips_agent_live_xxx", "apiUrl": "https://token-manager.rips.app"}' > ~/.clawdbot/skills/rips/config.json
+echo '{"apiKey": "rips_agent_live_xxx", "apiUrl": "https://my.rips.app"}' > ~/.clawdbot/skills/rips/config.json
 
 # 4. Check your status
 ./scripts/rips-me.sh
@@ -63,7 +63,7 @@ echo '{"apiKey": "rips_agent_live_xxx", "apiUrl": "https://token-manager.rips.ap
 ## Links
 
 - [Rips Platform](https://rips.app)
-- [Token Manager](https://token-manager.rips.app)
+- [Token Manager](https://my.rips.app)
 - [OpenClaw](https://openclaw.ai/)
 
 ## License

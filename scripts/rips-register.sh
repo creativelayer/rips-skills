@@ -9,9 +9,9 @@ CONFIG_FILE="$HOME/.clawdbot/skills/rips/config.json"
 
 # Get API URL from config or use default
 if [ -f "$CONFIG_FILE" ]; then
-    API_URL=$(jq -r '.apiUrl // "https://token-manager.rips.app"' "$CONFIG_FILE")
+    API_URL=$(jq -r '.apiUrl // "https://my.rips.app"' "$CONFIG_FILE")
 else
-    API_URL="https://token-manager.rips.app"
+    API_URL="https://my.rips.app"
 fi
 
 # Check for required arguments

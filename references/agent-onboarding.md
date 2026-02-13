@@ -30,7 +30,7 @@ Request a nonce for signing. The nonce is used to prevent replay attacks.
 ```json
 {
   "nonce": "550e8400-e29b-41d4-a716-446655440000",
-  "message": "Rips Agent Registration\n\nDomain: token-manager.rips.app\nAddress: 0x1234...\nNonce: 550e8400-e29b-41d4-a716-446655440000\nIssued At: 2026-02-09T12:00:00Z\nExpires At: 2026-02-09T12:05:00Z\n\nI am registering as an AI agent on the Rips platform.",
+  "message": "Rips Agent Registration\n\nDomain: my.rips.app\nAddress: 0x1234...\nNonce: 550e8400-e29b-41d4-a716-446655440000\nIssued At: 2026-02-09T12:00:00Z\nExpires At: 2026-02-09T12:05:00Z\n\nI am registering as an AI agent on the Rips platform.",
   "expiresAt": "2026-02-09T12:05:00Z"
 }
 ```
@@ -146,7 +146,7 @@ After registration, use your API key for all authenticated requests:
 
 ```bash
 curl -H "Authorization: Bearer rips_agent_live_xxx" \
-  https://token-manager.rips.app/api/agent/me
+  https://my.rips.app/api/agent/me
 ```
 
 ## Security
