@@ -260,6 +260,48 @@ Generates all 3 asset variants (full, top, bottom), uploads to IPFS, and returns
 
 **Reference**: [references/pack-designs.md](references/pack-designs.md)
 
+## Coin Data & Card Previews
+
+Access data about your coins on the platform, generate card preview images for marketing, and view platform statistics.
+
+### List Your Coins
+
+```bash
+scripts/rips-coins.sh
+```
+
+Returns all coins from your active consignment deals with market metadata (price, market cap, volume, etc).
+
+### Get Coin Details & Statistics
+
+```bash
+scripts/rips-coin-detail.sh "0xTokenAddress"
+```
+
+Returns full coin metadata plus platform stats: how many packs featured your coin, total cards distributed, unique users reached, and legendary cards.
+
+### Generate Card Preview
+
+```bash
+# Standard card
+scripts/rips-coin-card.sh "0xTokenAddress"
+
+# Legendary card
+scripts/rips-coin-card.sh "0xTokenAddress" legendary
+```
+
+Returns a base64 PNG data URL of a card preview image. To save as a file:
+
+```bash
+scripts/rips-coin-card.sh "0xTokenAddress" | jq -r '.preview' | sed 's/data:image\/png;base64,//' | base64 -d > card.png
+```
+
+Card types:
+- **Standard** — Silver/gray gradient card with coin logo, market cap, and 24h volume
+- **Legendary** — Gold gradient card with "LEGENDARY" badge
+
+**Reference**: [references/coin-data.md](references/coin-data.md)
+
 ## Capabilities Overview
 
 ### Agent Onboarding (Phase 1)
@@ -298,6 +340,14 @@ Generates all 3 asset variants (full, top, bottom), uploads to IPFS, and returns
 
 **Reference**: [references/pack-designs.md](references/pack-designs.md)
 
+### Coin Data & Card Previews
+
+- **List coins** from your consignment deals with market metadata
+- **View statistics** — packs, cards distributed, unique users, legendary cards
+- **Generate card previews** — standard and legendary PNG images for marketing
+
+**Reference**: [references/coin-data.md](references/coin-data.md)
+
 ### Sponsorships (Phase 3b - Coming Soon)
 
 - Create sponsored free packs with banner ads
@@ -333,6 +383,14 @@ Generates all 3 asset variants (full, top, bottom), uploads to IPFS, and returns
 | GET | `/api/agent/pack-designs` | List available base designs |
 | POST | `/api/agent/pack-designs/preview` | Preview logo on a base design |
 | POST | `/api/agent/pack-designs/generate` | Generate & upload pack assets to IPFS |
+
+### Coin Data & Card Previews
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/agent/coins` | List your coins with market data |
+| GET | `/api/agent/coins/:address` | Coin details + platform statistics |
+| GET | `/api/agent/coins/:address/card-preview` | Generate card preview image |
 
 ## Transaction Preparation
 
@@ -412,6 +470,14 @@ Common issues and fixes:
 - "Preview my logo on the purple foil design"
 - "Generate pack assets with foil-1 design and my token logo"
 - "Which base design would work best for a gaming token?"
+
+### Coin Data & Marketing
+
+- "List my coins on Rips"
+- "Show me the stats for my token at 0x..."
+- "Generate a card preview for my token"
+- "Create a legendary card image for my coin"
+- "How many packs has my token been in?"
 
 ### Sponsorships (Coming Soon)
 
